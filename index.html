@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RepoPilot-AI - Panel Admin</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #f5f7fa;
+            padding: 2rem;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        header {
+            background: #2563eb;
+            color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+        header h1 { font-size: 1.5rem; }
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #374151;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+        textarea { min-height: 100px; resize: vertical; }
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+        .btn-primary:hover { background: #1d4ed8; }
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+        .status {
+            padding: 1rem;
+            border-radius: 6px;
+            margin-top: 1rem;
+            display: none;
+        }
+        .status.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #6ee7b7;
+        }
+        .status.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
+        .video-list {
+            margin-top: 1rem;
+        }
+        .video-item {
+            padding: 1rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .video-item h3 { font-size: 1rem; margin-bottom: 0.25rem; }
+        .video-item .meta { font-size: 0.85rem; color: #6b7280; }
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+        .badge-indonesia { background: #dbeafe; color: #1e40af; }
+        .badge-papua { background: #fef3c7; color: #92400e; }
+        .actions { display: flex; gap: 0.5rem; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1> RepoPilot-AI - Panel Admin</h1>
+            <p>Kelola video Indonesia dan Papua</p>
+        </header>
+
+        <!-- Form Tambah/Edit Video -->
+        <div class="card">
+            <h2 id="formTitle">Tambah Video Baru</h2>
+            <form id="videoForm">
+                <input type="hidden" id="editSlug" value="">
+                
+                <div class="form-group">
+                    <label for="judul">Judul Video *</label>
+                    <input type="text" id="judul" required placeholder="Masukkan judul video">
+                </div>
+
+                <div class="form-group">
+                    <label for="slug">Slug (URL-friendly) *</label>
+                    <input type="text" id="slug" required placeholder="contoh: judul-video-saya">
+                    <small style="color: #6b7280; font-size: 0.85rem;">Gunakan huruf kecil, tanpa spasi, gunakan tanda hubung (-)</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="driveId">Google Drive ID *</label>
+                    <input type="text" id="driveId" required placeholder="ID file dari Google Drive">
+                    <small style="color: #6b7280; font-size: 0.85rem;">Contoh: 1ABC123xyz dari link drive.google.com/file/d/1ABC123xyz</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="kategori">Kategori *</label>
+                    <select id="kategori" required>
+                        <option value="">Pilih kategori</option>
+                        <option value="indonesia">Indonesia</option>
+                        <option value="papua">Papua</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="tanggal">Tanggal Publikasi *</label>
+                    <input type="date" id="tanggal" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="deskripsi">Deskripsi</label>
+                    <textarea id="deskripsi" placeholder="Deskripsi singkat video..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="coverFile">Upload Cover Image</label>
+                    <input type="file" id="coverFile" accept="image/*">
+                    <small style="color: #6b7280; font-size: 0.85rem;">Format: JPG/PNG, maks 2MB</small>
+                </div>
+
+                <div style="display: flex; gap: 1rem;">
+                    <button type="submit" class="btn btn-primary"> Publish Video</button>
+                    <button type="button" class="btn btn-secondary" onclick="resetForm()">Reset</button>
+                </div>
+            </form>
+
+            <div id="statusMessage" class="status"></div>
+        </div>
+
+        <!-- Daftar Video -->
+        <div class="card">
+            <h2>📋 Daftar Video</h2>
+            <button class="btn btn-secondary" onclick="loadVideos()" style="margin-bottom: 1rem;"> Refresh Daftar</button>
+            <div id="videoList" class="video-list">
+                <p style="color: #6b7280;">Klik "Refresh Daftar" untuk memuat video...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // KONFIGURASI - Ganti dengan URL Worker Anda
+        const WORKER_URL = 'https://farming-pilot.[username].workers.dev'; // GANTI INI
+        
+        const form = document.getElementById('videoForm');
+        const statusDiv = document.getElementById('statusMessage');
+        const videoListDiv = document.getElementById('videoList');
+        const formTitle = document.getElementById('formTitle');
+        const editSlugInput = document.getElementById('editSlug');
+
+        // Set tanggal hari ini sebagai default
+        document.getElementById('tanggal').valueAsDate = new Date();
+
+        // Handle form submit
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await handleSubmit();
+        });
+
+        async function handleSubmit() {
+            const slug = document.getElementById('slug').value.trim();
+            const judul = document.getElementById('judul').value.trim();
+            const driveId = document.getElementById('driveId').value.trim();
+            const kategori = document.getElementById('kategori').value;
+            const tanggal = document.getElementById('tanggal').value;
+            const deskripsi = document.getElementById('deskripsi').value.trim();
+            const coverFile = document.getElementById('coverFile').files[0];
+            const editSlug = editSlugInput.value;
+
+            // Validasi
+            if (!slug || !judul || !driveId || !kategori || !tanggal) {
+                showStatus('error', 'Semua field wajib (*) harus diisi!');
+                return;
+            }
+
+            // Validasi slug
+            if (!/^[a-z0-9-]+$/.test(slug)) {
+                showStatus('error', 'Slug hanya boleh berisi huruf kecil, angka, dan tanda hubung (-)');
+                return;
+            }
+
+            // Convert cover to base64
+            let coverBase64 = null;
+            if (coverFile) {
+                coverBase64 = await fileToBase64(coverFile);
+            }
+
+            const action = editSlug ? 'update' : 'add';
+            const payload = {
+                action,
+                slug,
+                judul,
+                driveId,
+                kategori,
+                tanggal,
+                deskripsi,
+                coverBase64
+            };
+
+            showStatus('success', '⏳ Sedang mempublish...', true);
+
+            try {
+                const response = await fetch(WORKER_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showStatus('success', `✅ ${action === 'add' ? 'Video berhasil ditambahkan' : 'Video berhasil diupdate'}! <a href="${result.url}" target="_blank" style="text-decoration: underline;">Lihat commit di GitHub</a>`);
+                    resetForm();
+                    loadVideos();
+                } else {
+                    showStatus('error', `❌ Gagal: ${result.error}`);
+                }
+            } catch (error) {
+                showStatus('error', ` Error: ${error.message}`);
+            }
+        }
+
+        async function loadVideos() {
+            videoListDiv.innerHTML = '<p>Memuat...</p>';
+            
+            try {
+                // Load dari GitHub API
+                const response = await fetch('https://api.github.com/repos/farming21/indonesia/contents/videos.json');
+                const data = await response.json();
+                const content = JSON.parse(atob(data.content));
+
+                if (content.length === 0) {
+                    videoListDiv.innerHTML = '<p style="color: #6b7280;">Belum ada video.</p>';
+                    return;
+                }
+
+                let html = '';
+                content.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal)).forEach(video => {
+                    html += `
+                        <div class="video-item">
+                            <div>
+                                <h3>${video.judul}</h3>
+                                <div class="meta">
+                                    <span class="badge badge-${video.kategori}">${video.kategori}</span>
+                                    <span style="margin-left: 0.5rem;">📅 ${video.tanggal}</span>
+                                </div>
+                            </div>
+                            <div class="actions">
+                                <button class="btn btn-secondary" onclick="editVideo('${video.slug}')">Edit</button>
+                                <button class="btn btn-danger" onclick="deleteVideo('${video.slug}')">Hapus</button>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                videoListDiv.innerHTML = html;
+            } catch (error) {
+                videoListDiv.innerHTML = `<p style="color: #ef4444;">Error: ${error.message}</p>`;
+            }
+        }
+
+        function editVideo(slug) {
+            // Implementasi edit akan dimuat dari videos.json
+            showStatus('success', 'Fitur edit akan dimuat... (klik Refresh Daftar terlebih dahulu)');
+        }
+
+        async function deleteVideo(slug) {
+            if (!confirm(`Yakin ingin menghapus video "${slug}"?`)) return;
+
+            const payload = {
+                action: 'delete',
+                slug: slug
+            };
+
+            try {
+                const response = await fetch(WORKER_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showStatus('success', '✅ Video berhasil dihapus!');
+                    loadVideos();
+                } else {
+                    showStatus('error', `❌ Gagal: ${result.error}`);
+                }
+            } catch (error) {
+                showStatus('error', `❌ Error: ${error.message}`);
+            }
+        }
+
+        function showStatus(type, message, isLoading = false) {
+            statusDiv.className = `status ${type}`;
+            statusDiv.innerHTML = message;
+            statusDiv.style.display = 'block';
+            if (!isLoading) {
+                setTimeout(() => {
+                    statusDiv.style.display = 'none';
+                }, 10000);
+            }
+        }
+
+        function resetForm() {
+            form.reset();
+            document.getElementById('tanggal').valueAsDate = new Date();
+            editSlugInput.value = '';
+            formTitle.textContent = 'Tambah Video Baru';
+        }
+
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+    </script>
+</body>
+</html>
