@@ -165,7 +165,7 @@
                 <div class="form-group">
                     <label for="coverFile">Upload Cover Image</label>
                     <input type="file" id="coverFile" accept="image/*">
-                    <small style="color: #6b7280; font-size: 0.85rem;">Format: JPG/PNG, maks 2MB</small>
+                    <small style="color: #6b7280; font-size: 0.85rem;">Format: JPG/PNG. File besar akan otomatis dikompres agar di bawah 1MB.</small>
                 </div>
 
                 <div style="display: flex; gap: 1rem;">
@@ -228,10 +228,16 @@
                 return;
             }
 
-            // Convert cover to base64
+            // Convert cover to base64 (dengan kompresi otomatis jika perlu)
             let coverBase64 = null;
             if (coverFile) {
-                coverBase64 = await fileToBase64(coverFile);
+                try {
+                    showStatus('success', '⏳ Memproses gambar cover...', true);
+                    coverBase64 = await prepareCoverBase64(coverFile);
+                } catch (err) {
+                    showStatus('error', `❌ Gagal memproses cover: ${err.message}`);
+                    return;
+                }
             }
 
             const action = editSlug ? 'update' : 'add';
@@ -258,16 +264,89 @@
                 const result = await response.json();
 
                 if (result.success) {
-                    showStatus('success', `✅ ${action === 'add' ? 'Video berhasil ditambahkan' : 'Video berhasil diupdate'}! <a href="${result.url}" target="_blank" style="text-decoration: underline;">Lihat commit di GitHub</a>`);
+                    let coverNote = '';
+                    if (coverFile) {
+                        coverNote = result.coverUploaded
+                            ? ' Cover berhasil diupload.'
+                            : ' ⚠️ Cover TIDAK diupload (lihat detail di respons Worker).';
+                    }
+                    showStatus('success', `✅ ${action === 'add' ? 'Video berhasil ditambahkan' : 'Video berhasil diupdate'}!${coverNote} <a href="${result.url}" target="_blank" style="text-decoration: underline;">Lihat commit di GitHub</a>`);
                     resetForm();
                     loadVideos();
                 } else {
-                    showStatus('error', `❌ Gagal: ${result.error}`);
+                    // Worker sekarang selalu mengembalikan alasan spesifik, termasuk saat
+                    // yang gagal adalah upload cover (result.coverUploaded === false).
+                    const prefix = (result.coverUploaded === false) ? '❌ Gagal upload cover: ' : '❌ Gagal: ';
+                    showStatus('error', `${prefix}${result.error}`);
                 }
             } catch (error) {
-                showStatus('error', ` Error: ${error.message}`);
+                showStatus('error', `❌ Error jaringan: ${error.message}`);
             }
         }
+
+        // Batas aman: sama dengan batas di Worker (1MB, dalam bentuk base64).
+        // Base64 menambah ukuran ~33%, jadi file mentah harus di bawah ini.
+        const MAX_COVER_RAW_BYTES = 750 * 1024; // ~750KB mentah -> aman di bawah 1MB base64
+
+        async function prepareCoverBase64(file) {
+            if (!file.type.startsWith('image/')) {
+                throw new Error('File harus berupa gambar (JPG/PNG).');
+            }
+
+            // Kalau file sudah cukup kecil, langsung pakai tanpa kompresi
+            if (file.size <= MAX_COVER_RAW_BYTES) {
+                return fileToBase64(file);
+            }
+
+            // Kompresi + resize progresif sampai di bawah batas
+            const img = await loadImageFromFile(file);
+            let quality = 0.85;
+            let maxDim = 1280;
+
+            for (let attempt = 0; attempt < 6; attempt++) {
+                const base64 = compressImageToBase64(img, maxDim, quality);
+                const estBytes = Math.floor((base64.length * 3) / 4);
+                if (estBytes <= MAX_COVER_RAW_BYTES * 1.34) {
+                    return base64;
+                }
+                quality -= 0.15;
+                maxDim = Math.floor(maxDim * 0.85);
+            }
+
+            throw new Error('Gambar tetap terlalu besar setelah kompresi. Coba gunakan gambar yang lebih kecil.');
+        }
+
+        function loadImageFromFile(file) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                const url = URL.createObjectURL(file);
+                img.onload = () => { URL.revokeObjectURL(url); resolve(img); };
+                img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Gagal membaca gambar')); };
+                img.src = url;
+            });
+        }
+
+        function compressImageToBase64(img, maxDim, quality) {
+            const canvas = document.createElement('canvas');
+            let { width, height } = img;
+            if (width > maxDim || height > maxDim) {
+                if (width >= height) {
+                    height = Math.round((height * maxDim) / width);
+                    width = maxDim;
+                } else {
+                    width = Math.round((width * maxDim) / height);
+                    height = maxDim;
+                }
+            }
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+            // dataURL format: data:image/jpeg;base64,xxxx
+            return canvas.toDataURL('image/jpeg', quality);
+        }
+
+        let cachedVideos = []; // dipakai oleh editVideo() supaya tidak perlu fetch ulang
 
         async function loadVideos() {
             videoListDiv.innerHTML = '<p>Memuat...</p>';
@@ -276,7 +355,8 @@
                 // Load dari GitHub API
                 const response = await fetch('https://api.github.com/repos/farming21/indonesia/contents/videos.json');
                 const data = await response.json();
-                const content = JSON.parse(atob(data.content));
+                const content = JSON.parse(decodeURIComponent(escape(atob(data.content))));
+                cachedVideos = content;
 
                 if (content.length === 0) {
                     videoListDiv.innerHTML = '<p style="color: #6b7280;">Belum ada video.</p>';
@@ -309,8 +389,28 @@
         }
 
         function editVideo(slug) {
-            // Implementasi edit akan dimuat dari videos.json
-            showStatus('success', 'Fitur edit akan dimuat... (klik Refresh Daftar terlebih dahulu)');
+            const video = cachedVideos.find(v => v.slug === slug);
+            if (!video) {
+                showStatus('error', '❌ Data video tidak ditemukan. Klik "Refresh Daftar" dulu, lalu coba lagi.');
+                return;
+            }
+
+            document.getElementById('judul').value = video.judul || '';
+            document.getElementById('slug').value = video.slug || '';
+            document.getElementById('driveId').value = video.driveId || '';
+            document.getElementById('kategori').value = video.kategori || '';
+            document.getElementById('tanggal').value = video.tanggal || '';
+            document.getElementById('deskripsi').value = video.deskripsi || '';
+            document.getElementById('coverFile').value = ''; // input file tidak bisa diisi programatik
+
+            editSlugInput.value = video.slug;
+            formTitle.textContent = `Edit Video: ${video.judul}`;
+
+            const coverHint = video.cover
+                ? ` Cover saat ini: ${video.cover} (biarkan kosong jika tidak ingin mengganti cover).`
+                : ' Video ini belum punya cover.';
+            showStatus('success', `✏️ Mode edit untuk "${video.judul}".${coverHint}`);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         async function deleteVideo(slug) {
