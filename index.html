@@ -3,146 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RepoPilot-AI - Panel Admin</title>
+    <meta name="robots" content="noindex,nofollow">
+    <title>RepoPilot-AI v2.1 - Panel Admin</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: #f5f7fa;
-            padding: 2rem;
-        }
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-        }
-        header {
-            background: #2563eb;
-            color: white;
-            padding: 1.5rem;
-            border-radius: 8px;
-            margin-bottom: 2rem;
-        }
-        header h1 { font-size: 1.5rem; }
-        .card {
-            background: white;
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .form-group {
-            margin-bottom: 1rem;
-        }
-        label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: #374151;
-        }
-        input, textarea, select {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
-            font-size: 1rem;
-        }
-        textarea { min-height: 100px; resize: vertical; }
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 6px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .btn-primary {
-            background: #2563eb;
-            color: white;
-        }
-        .btn-primary:hover { background: #1d4ed8; }
-        .btn-secondary {
-            background: #6b7280;
-            color: white;
-        }
-        .btn-danger {
-            background: #ef4444;
-            color: white;
-        }
-        .status {
-            padding: 1rem;
-            border-radius: 6px;
-            margin-top: 1rem;
-            display: none;
-        }
-        .status.success {
-            background: #d1fae5;
-            color: #065f46;
-            border: 1px solid #6ee7b7;
-        }
-        .status.error {
-            background: #fee2e2;
-            color: #991b1b;
-            border: 1px solid #fca5a5;
-        }
-        .video-list {
-            margin-top: 1rem;
-        }
-        .video-item {
-            padding: 1rem;
-            border: 1px solid #e5e7eb;
-            border-radius: 6px;
-            margin-bottom: 0.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .video-item h3 { font-size: 1rem; margin-bottom: 0.25rem; }
-        .video-item .meta { font-size: 0.85rem; color: #6b7280; }
-        .badge {
-            display: inline-block;
-            padding: 0.25rem 0.5rem;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: capitalize;
-        }
-        .badge-indonesia { background: #dbeafe; color: #1e40af; }
-        .badge-papua { background: #fef3c7; color: #92400e; }
-        .actions { display: flex; gap: 0.5rem; }
-        .hidden { display: none; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background:#f5f7fa; padding:2rem; }
+        .container { max-width:900px; margin:0 auto; }
+        header { background:#2563eb; color:white; padding:1.5rem; border-radius:8px; margin-bottom:2rem; }
+        header h1 { font-size:1.5rem; }
+        .card { background:white; border-radius:8px; padding:1.5rem; margin-bottom:1.5rem; box-shadow:0 2px 4px rgba(0,0,0,.1); }
+        .form-group { margin-bottom:1rem; }
+        label { display:block; margin-bottom:.5rem; font-weight:600; color:#374151; }
+        input, textarea, select { width:100%; padding:.75rem; border:1px solid #d1d5db; border-radius:6px; font-size:1rem; }
+        textarea { min-height:100px; resize:vertical; }
+        .btn { padding:.75rem 1.25rem; border:0; border-radius:6px; font-size:.95rem; font-weight:600; cursor:pointer; transition:.2s; }
+        .btn:disabled { opacity:.55; cursor:not-allowed; }
+        .btn-primary { background:#2563eb; color:white; }
+        .btn-primary:hover:not(:disabled) { background:#1d4ed8; }
+        .btn-secondary { background:#6b7280; color:white; }
+        .btn-danger { background:#ef4444; color:white; }
+        .status { padding:1rem; border-radius:6px; margin-top:1rem; display:none; white-space:pre-wrap; overflow-wrap:anywhere; }
+        .status.success { background:#d1fae5; color:#065f46; border:1px solid #6ee7b7; }
+        .status.error { background:#fee2e2; color:#991b1b; border:1px solid #fca5a5; }
+        .video-list { margin-top:1rem; }
+        .video-item { padding:1rem; border:1px solid #e5e7eb; border-radius:6px; margin-bottom:.5rem; display:flex; justify-content:space-between; align-items:center; gap:1rem; }
+        .video-item h3 { font-size:1rem; margin-bottom:.25rem; overflow-wrap:anywhere; }
+        .video-item .meta { font-size:.85rem; color:#6b7280; }
+        .badge { display:inline-block; padding:.25rem .5rem; border-radius:12px; font-size:.75rem; font-weight:600; text-transform:capitalize; }
+        .badge-indonesia { background:#dbeafe; color:#1e40af; }
+        .badge-papua { background:#fef3c7; color:#92400e; }
+        .actions { display:flex; gap:.5rem; flex-wrap:wrap; }
+        .hidden { display:none !important; }
+        .muted { color:#6b7280; font-size:.85rem; }
+        .top-actions { display:flex; gap:.75rem; align-items:center; flex-wrap:wrap; }
+        @media (max-width:650px) { body { padding:1rem; } .video-item { align-items:flex-start; flex-direction:column; } .actions { width:100%; } .actions .btn { flex:1; } }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1> RepoPilot-AI - Panel Admin</h1>
-            <p>Kelola video Indonesia dan Papua</p>
-        </header>
+<div class="container">
+    <header>
+        <h1>RepoPilot-AI v2.1</h1>
+        <p>Panel admin aman untuk mengelola video Indonesia dan Papua</p>
+    </header>
 
-        <!-- Form Tambah/Edit Video -->
+    <div class="card" id="authCard">
+        <h2>🔐 Login Admin</h2>
+        <p class="muted" style="margin:.5rem 0 1rem;">Token hanya disimpan di session browser dan tidak ditulis ke repository.</p>
+        <form id="authForm">
+            <div class="form-group">
+                <label for="apiToken">Admin API Token</label>
+                <input type="password" id="apiToken" autocomplete="current-password" required placeholder="Masukkan ADMIN_API_TOKEN">
+            </div>
+            <button type="submit" class="btn btn-primary">Masuk</button>
+        </form>
+        <div id="authStatus" class="status"></div>
+    </div>
+
+    <main id="app" class="hidden">
         <div class="card">
-            <h2 id="formTitle">Tambah Video Baru</h2>
-            <form id="videoForm">
+            <div class="top-actions" style="justify-content:space-between;">
+                <div>
+                    <h2 id="formTitle">Tambah Video Baru</h2>
+                    <p id="editHint" class="muted" style="margin-top:.35rem;">Mode tambah</p>
+                </div>
+                <button type="button" id="logoutBtn" class="btn btn-secondary">Logout</button>
+            </div>
+            <form id="videoForm" style="margin-top:1rem;">
                 <input type="hidden" id="editSlug" value="">
-                
                 <div class="form-group">
                     <label for="judul">Judul Video *</label>
-                    <input type="text" id="judul" required placeholder="Masukkan judul video">
+                    <input type="text" id="judul" required maxlength="200" placeholder="Masukkan judul video">
                 </div>
-
                 <div class="form-group">
                     <label for="slug">Slug (URL-friendly) *</label>
-                    <input type="text" id="slug" required placeholder="contoh: judul-video-saya">
-                    <small style="color: #6b7280; font-size: 0.85rem;">Gunakan huruf kecil, tanpa spasi, gunakan tanda hubung (-)</small>
+                    <input type="text" id="slug" required maxlength="80" pattern="[a-z0-9]+(-[a-z0-9]+)*" placeholder="contoh: judul-video-saya">
+                    <small class="muted">Huruf kecil, angka, dan tanda hubung. Maksimal 80 karakter.</small>
                 </div>
-
                 <div class="form-group">
                     <label for="driveId">Google Drive ID *</label>
-                    <input type="text" id="driveId" required placeholder="ID file dari Google Drive">
-                    <small style="color: #6b7280; font-size: 0.85rem;">Contoh: 1ABC123xyz dari link drive.google.com/file/d/1ABC123xyz</small>
+                    <input type="text" id="driveId" required maxlength="200" placeholder="ID file dari Google Drive">
                 </div>
-
                 <div class="form-group">
                     <label for="kategori">Kategori *</label>
                     <select id="kategori" required>
@@ -151,322 +91,277 @@
                         <option value="papua">Papua</option>
                     </select>
                 </div>
-
                 <div class="form-group">
                     <label for="tanggal">Tanggal Publikasi *</label>
                     <input type="date" id="tanggal" required>
                 </div>
-
                 <div class="form-group">
                     <label for="deskripsi">Deskripsi</label>
-                    <textarea id="deskripsi" placeholder="Deskripsi singkat video..."></textarea>
+                    <textarea id="deskripsi" maxlength="5000" placeholder="Deskripsi singkat video..."></textarea>
                 </div>
-
                 <div class="form-group">
                     <label for="coverFile">Upload Cover Image</label>
-                    <input type="file" id="coverFile" accept="image/*">
-                    <small style="color: #6b7280; font-size: 0.85rem;">Format: JPG/PNG. File besar akan otomatis dikompres agar di bawah 1MB.</small>
+                    <input type="file" id="coverFile" accept="image/jpeg,image/png,image/webp">
+                    <small class="muted">Cover akan dikonversi ke JPEG dan dikompres otomatis.</small>
                 </div>
-
-                <div style="display: flex; gap: 1rem;">
-                    <button type="submit" class="btn btn-primary"> Publish Video</button>
-                    <button type="button" class="btn btn-secondary" onclick="resetForm()">Reset</button>
+                <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+                    <button type="submit" id="submitBtn" class="btn btn-primary">Publish Video</button>
+                    <button type="button" id="resetBtn" class="btn btn-secondary">Reset</button>
                 </div>
             </form>
-
             <div id="statusMessage" class="status"></div>
         </div>
 
-        <!-- Daftar Video -->
         <div class="card">
-            <h2>📋 Daftar Video</h2>
-            <button class="btn btn-secondary" onclick="loadVideos()" style="margin-bottom: 1rem;"> Refresh Daftar</button>
-            <div id="videoList" class="video-list">
-                <p style="color: #6b7280;">Klik "Refresh Daftar" untuk memuat video...</p>
+            <div class="top-actions" style="justify-content:space-between;">
+                <h2>📋 Daftar Video</h2>
+                <button type="button" id="refreshBtn" class="btn btn-secondary">Refresh</button>
             </div>
+            <div id="videoList" class="video-list"><p class="muted">Memuat...</p></div>
         </div>
-    </div>
+    </main>
+</div>
 
-    <script>
-        // KONFIGURASI - Ganti dengan URL Worker Anda
-        const WORKER_URL = 'https://farming-pilot.sulomace.workers.dev'; // GANTI INI
-        
-        const form = document.getElementById('videoForm');
-        const statusDiv = document.getElementById('statusMessage');
-        const videoListDiv = document.getElementById('videoList');
-        const formTitle = document.getElementById('formTitle');
-        const editSlugInput = document.getElementById('editSlug');
+<script>
+'use strict';
 
-        // Set tanggal hari ini sebagai default
-        document.getElementById('tanggal').valueAsDate = new Date();
+const WORKER_URL = 'https://farming-pilot.sulomace.workers.dev';
+const TOKEN_KEY = 'repopilot_admin_token_v21';
+const MAX_COVER_RAW_BYTES = 750 * 1024;
 
-        // Handle form submit
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            await handleSubmit();
-        });
+const $ = (id) => document.getElementById(id);
+const form = $('videoForm');
+const statusDiv = $('statusMessage');
+const authStatus = $('authStatus');
+const videoListDiv = $('videoList');
+const submitBtn = $('submitBtn');
+let cachedVideos = [];
+let isBusy = false;
 
-        async function handleSubmit() {
-            const slug = document.getElementById('slug').value.trim();
-            const judul = document.getElementById('judul').value.trim();
-            const driveId = document.getElementById('driveId').value.trim();
-            const kategori = document.getElementById('kategori').value;
-            const tanggal = document.getElementById('tanggal').value;
-            const deskripsi = document.getElementById('deskripsi').value.trim();
-            const coverFile = document.getElementById('coverFile').files[0];
-            const editSlug = editSlugInput.value;
+function getToken() { return sessionStorage.getItem(TOKEN_KEY) || ''; }
+function setToken(token) { sessionStorage.setItem(TOKEN_KEY, token); }
+function clearToken() { sessionStorage.removeItem(TOKEN_KEY); }
 
-            // Validasi
-            if (!slug || !judul || !driveId || !kategori || !tanggal) {
-                showStatus('error', 'Semua field wajib (*) harus diisi!');
-                return;
-            }
+function showStatus(type, message, isLoading = false) {
+    statusDiv.className = `status ${type}`;
+    statusDiv.textContent = message;
+    statusDiv.style.display = 'block';
+    if (!isLoading) setTimeout(() => { statusDiv.style.display = 'none'; }, 10000);
+}
 
-            // Validasi slug
-            if (!/^[a-z0-9-]+$/.test(slug)) {
-                showStatus('error', 'Slug hanya boleh berisi huruf kecil, angka, dan tanda hubung (-)');
-                return;
-            }
+function showAuthStatus(type, message) {
+    authStatus.className = `status ${type}`;
+    authStatus.textContent = message;
+    authStatus.style.display = 'block';
+}
 
-            // Convert cover to base64 (dengan kompresi otomatis jika perlu)
-            let coverBase64 = null;
-            if (coverFile) {
-                try {
-                    showStatus('success', '⏳ Memproses gambar cover...', true);
-                    coverBase64 = await prepareCoverBase64(coverFile);
-                } catch (err) {
-                    showStatus('error', `❌ Gagal memproses cover: ${err.message}`);
-                    return;
-                }
-            }
+async function api(path = '', options = {}) {
+    const token = getToken();
+    const headers = new Headers(options.headers || {});
+    headers.set('Accept', 'application/json');
+    if (options.body && !headers.has('Content-Type')) headers.set('Content-Type', 'application/json');
+    if (token) headers.set('Authorization', `Bearer ${token}`);
 
-            const action = editSlug ? 'update' : 'add';
-            const payload = {
-                action,
-                slug,
-                judul,
-                driveId,
-                kategori,
-                tanggal,
-                deskripsi,
-                coverBase64
-            };
+    const response = await fetch(`${WORKER_URL}${path}`, { ...options, headers });
+    let result = null;
+    const text = await response.text();
+    try { result = text ? JSON.parse(text) : {}; } catch { result = { success:false, error:text || `HTTP ${response.status}` }; }
 
-            showStatus('success', '⏳ Sedang mempublish...', true);
+    if (response.status === 401) {
+        clearToken();
+        showLogin();
+        throw new Error('Sesi admin tidak valid atau token salah.');
+    }
+    if (!response.ok || result.success === false) {
+        const err = new Error(result.error || `HTTP ${response.status}`);
+        err.code = result.code;
+        err.status = response.status;
+        err.retryable = Boolean(result.retryable);
+        throw err;
+    }
+    return result;
+}
 
-            try {
-                const response = await fetch(WORKER_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
+function showLogin() {
+    $('authCard').classList.remove('hidden');
+    $('app').classList.add('hidden');
+}
 
-                const result = await response.json();
+function showApp() {
+    $('authCard').classList.add('hidden');
+    $('app').classList.remove('hidden');
+}
 
-                if (result.success) {
-                    let coverNote = '';
-                    if (coverFile) {
-                        coverNote = result.coverUploaded
-                            ? ' Cover berhasil diupload.'
-                            : ' ⚠️ Cover TIDAK diupload (lihat detail di respons Worker).';
-                    }
-                    showStatus('success', `✅ ${action === 'add' ? 'Video berhasil ditambahkan' : 'Video berhasil diupdate'}!${coverNote} <a href="${result.url}" target="_blank" style="text-decoration: underline;">Lihat commit di GitHub</a>`);
-                    resetForm();
-                    loadVideos();
-                } else {
-                    // Worker sekarang selalu mengembalikan alasan spesifik, termasuk saat
-                    // yang gagal adalah upload cover (result.coverUploaded === false).
-                    const prefix = (result.coverUploaded === false) ? '❌ Gagal upload cover: ' : '❌ Gagal: ';
-                    showStatus('error', `${prefix}${result.error}`);
-                }
-            } catch (error) {
-                showStatus('error', `❌ Error jaringan: ${error.message}`);
-            }
+$('authForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const token = $('apiToken').value.trim();
+    if (!token) return;
+    setToken(token);
+    try {
+        await api('?action=list');
+        $('apiToken').value = '';
+        showApp();
+        await loadVideos();
+    } catch (error) {
+        clearToken();
+        showAuthStatus('error', `❌ ${error.message}`);
+    }
+});
+
+$('logoutBtn').addEventListener('click', () => {
+    clearToken();
+    cachedVideos = [];
+    resetForm();
+    showLogin();
+});
+
+form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    await handleSubmit();
+});
+$('resetBtn').addEventListener('click', resetForm);
+$('refreshBtn').addEventListener('click', loadVideos);
+
+async function handleSubmit() {
+    if (isBusy) return;
+    const slug = $('slug').value.trim();
+    const judul = $('judul').value.trim();
+    const driveId = $('driveId').value.trim();
+    const kategori = $('kategori').value;
+    const tanggal = $('tanggal').value;
+    const deskripsi = $('deskripsi').value.trim();
+    const coverFile = $('coverFile').files[0];
+    const previousSlug = $('editSlug').value.trim();
+
+    if (!slug || !judul || !driveId || !kategori || !tanggal) {
+        showStatus('error', 'Semua field wajib (*) harus diisi!'); return;
+    }
+    if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) {
+        showStatus('error', 'Slug hanya boleh berisi huruf kecil, angka, dan tanda hubung tunggal di antara kata.'); return;
+    }
+
+    isBusy = true;
+    submitBtn.disabled = true;
+    $('resetBtn').disabled = true;
+    try {
+        let coverBase64 = null;
+        if (coverFile) {
+            showStatus('success', '⏳ Memproses cover...', true);
+            coverBase64 = await prepareCoverBase64(coverFile);
         }
 
-        // Batas aman: sama dengan batas di Worker (1MB, dalam bentuk base64).
-        // Base64 menambah ukuran ~33%, jadi file mentah harus di bawah ini.
-        const MAX_COVER_RAW_BYTES = 750 * 1024; // ~750KB mentah -> aman di bawah 1MB base64
+        const action = previousSlug ? 'update' : 'add';
+        const payload = { action, slug, judul, driveId, kategori, tanggal, deskripsi, coverBase64 };
+        if (previousSlug) payload.previousSlug = previousSlug;
 
-        async function prepareCoverBase64(file) {
-            if (!file.type.startsWith('image/')) {
-                throw new Error('File harus berupa gambar (JPG/PNG).');
-            }
+        showStatus('success', '⏳ Menyimpan perubahan ke GitHub...', true);
+        const result = await api('', { method:'POST', body:JSON.stringify(payload) });
+        const coverState = result.cover?.action ? ` Cover: ${result.cover.action}.` : '';
+        showStatus('success', `✅ ${action === 'add' ? 'Video ditambahkan' : 'Video diupdate'} berhasil.${coverState} GitHub Actions akan membangun website.`);
+        resetForm();
+        await loadVideos();
+    } catch (error) {
+        showStatus('error', `❌ ${error.message}${error.retryable ? '\nSilakan coba lagi.' : ''}`);
+    } finally {
+        isBusy = false;
+        submitBtn.disabled = false;
+        $('resetBtn').disabled = false;
+    }
+}
 
-            // Kalau file sudah cukup kecil, langsung pakai tanpa kompresi
-            if (file.size <= MAX_COVER_RAW_BYTES) {
-                return fileToBase64(file);
-            }
+async function deleteVideo(slug) {
+    if (isBusy) return;
+    const video = cachedVideos.find(v => v.slug === slug);
+    const label = video?.judul || slug;
+    if (!confirm(`Yakin ingin menghapus video "${label}"? Cover terkait juga akan dihapus jika ada.`)) return;
 
-            // Kompresi + resize progresif sampai di bawah batas
-            const img = await loadImageFromFile(file);
-            let quality = 0.85;
-            let maxDim = 1280;
+    isBusy = true;
+    try {
+        showStatus('success', '⏳ Menghapus video dan cover...', true);
+        const result = await api('', { method:'POST', body:JSON.stringify({ action:'delete', slug }) });
+        const coverState = result.cover?.action ? ` ${result.cover.action}.` : '';
+        showStatus('success', `✅ Video berhasil dihapus.${coverState}`);
+        await loadVideos();
+    } catch (error) {
+        showStatus('error', `❌ ${error.message}`);
+    } finally { isBusy = false; }
+}
 
-            for (let attempt = 0; attempt < 6; attempt++) {
-                const base64 = compressImageToBase64(img, maxDim, quality);
-                const estBytes = Math.floor((base64.length * 3) / 4);
-                if (estBytes <= MAX_COVER_RAW_BYTES * 1.34) {
-                    return base64;
-                }
-                quality -= 0.15;
-                maxDim = Math.floor(maxDim * 0.85);
-            }
+function editVideo(slug) {
+    const video = cachedVideos.find(v => v.slug === slug);
+    if (!video) { showStatus('error', 'Data video tidak ditemukan. Refresh daftar terlebih dahulu.'); return; }
+    $('judul').value = video.judul || '';
+    $('slug').value = video.slug || '';
+    $('driveId').value = video.driveId || '';
+    $('kategori').value = video.kategori || '';
+    $('tanggal').value = video.tanggal || '';
+    $('deskripsi').value = video.deskripsi || '';
+    $('coverFile').value = '';
+    $('editSlug').value = video.slug;
+    $('formTitle').textContent = `Edit Video: ${video.judul || video.slug}`;
+    $('editHint').textContent = video.cover ? `Cover: ${video.cover}. Kosongkan file cover untuk mempertahankan cover.` : 'Video belum memiliki cover.';
+    window.scrollTo({ top:0, behavior:'smooth' });
+}
 
-            throw new Error('Gambar tetap terlalu besar setelah kompresi. Coba gunakan gambar yang lebih kecil.');
-        }
+async function loadVideos() {
+    videoListDiv.textContent = 'Memuat...';
+    try {
+        const result = await api('?action=list');
+        cachedVideos = Array.isArray(result.videos) ? result.videos : [];
+        renderVideos(cachedVideos);
+    } catch (error) {
+        videoListDiv.textContent = `Error: ${error.message}`;
+    }
+}
 
-        function loadImageFromFile(file) {
-            return new Promise((resolve, reject) => {
-                const img = new Image();
-                const url = URL.createObjectURL(file);
-                img.onload = () => { URL.revokeObjectURL(url); resolve(img); };
-                img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Gagal membaca gambar')); };
-                img.src = url;
-            });
-        }
+function renderVideos(videos) {
+    videoListDiv.replaceChildren();
+    if (!videos.length) {
+        const p = document.createElement('p'); p.className = 'muted'; p.textContent = 'Belum ada video.'; videoListDiv.appendChild(p); return;
+    }
+    [...videos].sort((a,b) => String(b.tanggal).localeCompare(String(a.tanggal))).forEach(video => {
+        const item = document.createElement('div'); item.className = 'video-item';
+        const info = document.createElement('div');
+        const h3 = document.createElement('h3'); h3.textContent = video.judul || video.slug;
+        const meta = document.createElement('div'); meta.className = 'meta';
+        const badge = document.createElement('span'); badge.className = `badge badge-${video.kategori}`; badge.textContent = video.kategori || 'unknown';
+        const date = document.createElement('span'); date.style.marginLeft = '.5rem'; date.textContent = `📅 ${video.tanggal || '-'}`;
+        meta.append(badge, date); info.append(h3, meta);
+        const actions = document.createElement('div'); actions.className = 'actions';
+        const edit = document.createElement('button'); edit.className='btn btn-secondary'; edit.type='button'; edit.textContent='Edit'; edit.dataset.action='edit'; edit.dataset.slug=video.slug;
+        const del = document.createElement('button'); del.className='btn btn-danger'; del.type='button'; del.textContent='Hapus'; del.dataset.action='delete'; del.dataset.slug=video.slug;
+        actions.append(edit, del); item.append(info, actions); videoListDiv.appendChild(item);
+    });
+}
 
-        function compressImageToBase64(img, maxDim, quality) {
-            const canvas = document.createElement('canvas');
-            let { width, height } = img;
-            if (width > maxDim || height > maxDim) {
-                if (width >= height) {
-                    height = Math.round((height * maxDim) / width);
-                    width = maxDim;
-                } else {
-                    width = Math.round((width * maxDim) / height);
-                    height = maxDim;
-                }
-            }
-            canvas.width = width;
-            canvas.height = height;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, width, height);
-            // dataURL format: data:image/jpeg;base64,xxxx
-            return canvas.toDataURL('image/jpeg', quality);
-        }
+videoListDiv.addEventListener('click', (e) => {
+    const button = e.target.closest('button[data-action]');
+    if (!button) return;
+    if (button.dataset.action === 'edit') editVideo(button.dataset.slug);
+    if (button.dataset.action === 'delete') deleteVideo(button.dataset.slug);
+});
 
-        let cachedVideos = []; // dipakai oleh editVideo() supaya tidak perlu fetch ulang
+async function prepareCoverBase64(file) {
+    if (!['image/jpeg','image/png','image/webp'].includes(file.type)) throw new Error('Cover harus JPG, PNG, atau WebP.');
+    if (file.size <= MAX_COVER_RAW_BYTES && file.type === 'image/jpeg') return fileToBase64(file);
+    const img = await loadImageFromFile(file);
+    let quality = 0.85, maxDim = 1280;
+    for (let attempt=0; attempt<8; attempt++) {
+        const base64 = compressImageToBase64(img, maxDim, quality);
+        const rawBytes = Math.max(0, Math.floor((base64.split(',')[1].length * 3) / 4) - (base64.endsWith('==') ? 2 : base64.endsWith('=') ? 1 : 0));
+        if (rawBytes <= MAX_COVER_RAW_BYTES) return base64;
+        quality = Math.max(.35, quality - .08);
+        maxDim = Math.max(640, Math.floor(maxDim * .85));
+    }
+    throw new Error('Gambar tetap terlalu besar setelah kompresi. Gunakan gambar yang lebih kecil.');
+}
+function loadImageFromFile(file) { return new Promise((resolve,reject)=>{ const img=new Image(); const url=URL.createObjectURL(file); img.onload=()=>{URL.revokeObjectURL(url);resolve(img)}; img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error('Gagal membaca gambar'))}; img.src=url; }); }
+function compressImageToBase64(img,maxDim,quality){ const canvas=document.createElement('canvas'); let {width,height}=img; if(width>maxDim||height>maxDim){if(width>=height){height=Math.round(height*maxDim/width);width=maxDim}else{width=Math.round(width*maxDim/height);height=maxDim}} canvas.width=width;canvas.height=height;const ctx=canvas.getContext('2d');if(!ctx)throw new Error('Browser tidak mendukung image canvas.');ctx.drawImage(img,0,0,width,height);return canvas.toDataURL('image/jpeg',quality); }
+function fileToBase64(file){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=()=>reject(new Error('Gagal membaca file'));reader.readAsDataURL(file);});}
+function resetForm(){ form.reset(); $('tanggal').valueAsDate=new Date(); $('editSlug').value=''; $('formTitle').textContent='Tambah Video Baru'; $('editHint').textContent='Mode tambah'; }
 
-        async function loadVideos() {
-            videoListDiv.innerHTML = '<p>Memuat...</p>';
-            
-            try {
-                // Load dari GitHub API
-                const response = await fetch('https://api.github.com/repos/farming21/indonesia/contents/videos.json');
-                const data = await response.json();
-                const content = JSON.parse(decodeURIComponent(escape(atob(data.content))));
-                cachedVideos = content;
-
-                if (content.length === 0) {
-                    videoListDiv.innerHTML = '<p style="color: #6b7280;">Belum ada video.</p>';
-                    return;
-                }
-
-                let html = '';
-                content.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal)).forEach(video => {
-                    html += `
-                        <div class="video-item">
-                            <div>
-                                <h3>${video.judul}</h3>
-                                <div class="meta">
-                                    <span class="badge badge-${video.kategori}">${video.kategori}</span>
-                                    <span style="margin-left: 0.5rem;">📅 ${video.tanggal}</span>
-                                </div>
-                            </div>
-                            <div class="actions">
-                                <button class="btn btn-secondary" onclick="editVideo('${video.slug}')">Edit</button>
-                                <button class="btn btn-danger" onclick="deleteVideo('${video.slug}')">Hapus</button>
-                            </div>
-                        </div>
-                    `;
-                });
-
-                videoListDiv.innerHTML = html;
-            } catch (error) {
-                videoListDiv.innerHTML = `<p style="color: #ef4444;">Error: ${error.message}</p>`;
-            }
-        }
-
-        function editVideo(slug) {
-            const video = cachedVideos.find(v => v.slug === slug);
-            if (!video) {
-                showStatus('error', '❌ Data video tidak ditemukan. Klik "Refresh Daftar" dulu, lalu coba lagi.');
-                return;
-            }
-
-            document.getElementById('judul').value = video.judul || '';
-            document.getElementById('slug').value = video.slug || '';
-            document.getElementById('driveId').value = video.driveId || '';
-            document.getElementById('kategori').value = video.kategori || '';
-            document.getElementById('tanggal').value = video.tanggal || '';
-            document.getElementById('deskripsi').value = video.deskripsi || '';
-            document.getElementById('coverFile').value = ''; // input file tidak bisa diisi programatik
-
-            editSlugInput.value = video.slug;
-            formTitle.textContent = `Edit Video: ${video.judul}`;
-
-            const coverHint = video.cover
-                ? ` Cover saat ini: ${video.cover} (biarkan kosong jika tidak ingin mengganti cover).`
-                : ' Video ini belum punya cover.';
-            showStatus('success', `✏️ Mode edit untuk "${video.judul}".${coverHint}`);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        async function deleteVideo(slug) {
-            if (!confirm(`Yakin ingin menghapus video "${slug}"?`)) return;
-
-            const payload = {
-                action: 'delete',
-                slug: slug
-            };
-
-            try {
-                const response = await fetch(WORKER_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                const result = await response.json();
-
-                if (result.success) {
-                    showStatus('success', '✅ Video berhasil dihapus!');
-                    loadVideos();
-                } else {
-                    showStatus('error', `❌ Gagal: ${result.error}`);
-                }
-            } catch (error) {
-                showStatus('error', `❌ Error: ${error.message}`);
-            }
-        }
-
-        function showStatus(type, message, isLoading = false) {
-            statusDiv.className = `status ${type}`;
-            statusDiv.innerHTML = message;
-            statusDiv.style.display = 'block';
-            if (!isLoading) {
-                setTimeout(() => {
-                    statusDiv.style.display = 'none';
-                }, 10000);
-            }
-        }
-
-        function resetForm() {
-            form.reset();
-            document.getElementById('tanggal').valueAsDate = new Date();
-            editSlugInput.value = '';
-            formTitle.textContent = 'Tambah Video Baru';
-        }
-
-        function fileToBase64(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = () => resolve(reader.result);
-                reader.onerror = reject;
-                reader.readAsDataURL(file);
-            });
-        }
-    </script>
+$('tanggal').valueAsDate = new Date();
+if (getToken()) { showApp(); loadVideos().catch(() => showLogin()); } else showLogin();
+</script>
 </body>
 </html>
